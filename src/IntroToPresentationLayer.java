@@ -7,6 +7,7 @@
 // exist in the presentation layer, and actually each application tends to have its own entry point,
 // if the program/product has multiple applications. 
 
+import java.sql.Date;
 import java.util.Scanner;
 
 public class IntroToPresentationLayer {
@@ -28,12 +29,13 @@ public class IntroToPresentationLayer {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println();
-            System.out.println("Enter a number between 1 and 5 for the following options(or 0 to exit):");
-            System.out.println("1. Running a single query against the meal planning database");
-            System.out.println("2. Running GetRecipes stores procedure against the meal planning database");
+            System.out.println("Enter a number between 1 and 6 for the following options(or 0 to exit):");
+            System.out.println("1. Running a single query against the MealPlanning database");
+            System.out.println("2. Running GetRecipes stored procedure against the MealPlanning database");
             System.out.println("3. Running ArcadeGames custom statement");
             System.out.println("4. Running ArcadeGames prepared statement");
-            System.out.println("5. Running ArcadeGames stored procedure");
+            System.out.println("5. Running ArcadeGames stored procedure to retrieve data");
+            System.out.println("6. Running ArcadeGames stored procedure to insert a new game");
             System.out.print("> ");
 
             // Read user input
@@ -41,11 +43,12 @@ public class IntroToPresentationLayer {
                 int userInput = scanner.nextInt();
 
                 // Check if input is in the valid range
-                if (userInput >= 1 && userInput <= 5) {
+                if (userInput >= 1 && userInput <= 6) {
                     // Execute code based on user input
                     switch (userInput) {
                         case 1:
                             System.out.println("Executing code for option 1...");
+                            System.out.println("Query being run: SELECT * FROM Meal");
                             // Now we can use the dal object, so let's print
                             // out some rows from the Meal table, in the MealPlanningDatabase.
                             // We need to pass the dal method everything it needs to run a query, including
@@ -69,7 +72,8 @@ public class IntroToPresentationLayer {
                             break;
                         case 3:
                             System.out.println("Executing code for option 3...");
-                            System.out.println("Input a query:");
+                            System.out.println(
+                                    "Input a query to run against the ArcadeGames database (Don't SQL inject me):");
                             String userQuery = userInformation.nextLine();
                             if (arcadeDAL.executeStatement(userQuery, userName, password)) {
                                 System.out.println("Successfully connected to the database");
@@ -91,6 +95,23 @@ public class IntroToPresentationLayer {
                             System.out.println("Executing code for option 5...");
                             System.out.println("Stored Procedure...\n");
                             if (arcadeDAL.TryExecutingAStoredProcedure(userName, password)) {
+                                System.out.println("Successfully connected to the database");
+                            } else {
+                                System.out.println("Failed to connect to the database");
+                            }
+                            break;
+                        /**
+                         * LAB EXTRA CREDIT - PLEASE ADD FIVE POINTS TO ASSIGNMENT Problem Set Four
+                         */
+                        case 6:
+                            System.out.println("Executing code for option 6...");
+                            System.out.println("Input a game name:");
+                            String gameName = userInformation.nextLine();
+                            System.out.println("Input a developer name:");
+                            String devName = userInformation.nextLine();
+                            System.out.println("Input a release date:");
+                            Date relDate = Date.valueOf(userInformation.nextLine());
+                            if (arcadeDAL.insertGame(gameName, devName, relDate, userName, password)) {
                                 System.out.println("Successfully connected to the database");
                             } else {
                                 System.out.println("Failed to connect to the database");

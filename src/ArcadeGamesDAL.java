@@ -89,4 +89,38 @@ public class ArcadeGamesDAL {
         }
         return true;
     }
+
+    /**
+     * LAB EXTRA CREDIT - PLEASE ADD FIVE POINTS TO ASSIGNMENT Problem Set Four
+     */
+    public boolean insertGame(String GameName, String DeveloperName, Date ReleaseDate, String user, String password) {
+        Connection myConnection = getMySQLConnection(user, password);
+        try {
+            // Prepare the stored procedure call
+            CallableStatement myStoredProcedureCall = myConnection.prepareCall("{call InsertGameJDBC(?, ?, ?)}");
+
+            // Set the values for the parameters
+            myStoredProcedureCall.setString(1, GameName);
+            myStoredProcedureCall.setString(2, DeveloperName);
+            myStoredProcedureCall.setDate(3, ReleaseDate);
+            myStoredProcedureCall.executeQuery();
+
+            System.out.println("Here is the game in the database:");
+            PreparedStatement myStatement = myConnection.prepareStatement("SELECT * FROM Game WHERE GameName = ?");
+            myStatement.setString(1, GameName);
+            ResultSet myRelation = myStatement.executeQuery();
+            // Iterate over the ResultSet, row by row
+            while (myRelation.next()) {
+                int id = myRelation.getInt("Id");
+                String gameName = myRelation.getString("GameName");
+                String devName = myRelation.getString("DeveloperName");
+                Date releaseDate = myRelation.getDate("ReleaseDate");
+                System.out.println("Tuple Values:" + id + "," + gameName + "," + devName + "," + releaseDate);
+            }
+        } catch (SQLException myException) {
+            System.out.println("Failed to execute stored procedure:" + myException.getMessage());
+            return false;
+        }
+        return true;
+    }
 }
